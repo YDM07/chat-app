@@ -1,0 +1,99 @@
+/* src/pages/Chat.css */
+
+.chat-page {
+    display: flex;
+    height: 100vh;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.sidebar {
+    width: 25%;
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.friend-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.friend-list li {
+    padding: 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.friend-list li:hover {
+    background-color: #ddd;
+}
+
+.friend-list li.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.friend-list img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.empty-friends {
+    font-style: italic;
+    color: gray;
+    margin-top: 20px;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.nav-links button {
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.nav-links button:hover {
+    background-color: #0056b3;
+}
+
+.chat-area {
+    width: 75%;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-header h3 {
+    font-size: 24px;
+}
+
+.empty-chat {
+    text-align: center;
+    color: #888;
+}

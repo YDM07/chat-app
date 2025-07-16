@@ -1,12 +1,29 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// src/firebase.js
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendEmailVerification,
+  signOut
+} from "firebase/auth";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs
+} from "firebase/firestore";
+
+import { getStorage } from "firebase/storage";
+
+
+// 🔧 Replace these values with your own Firebase project config
 const firebaseConfig = {
     apiKey: "AIzaSyAIqjwNWS5y3dNxD_y4MmIK821YC1L-ucM",
     authDomain: "chatapp-b9d54.firebaseapp.com",
@@ -15,9 +32,27 @@ const firebaseConfig = {
     messagingSenderId: "566031867550",
     appId: "1:566031867550:web:de83494d75726bb81be58f",
     measurementId: "G-NLJB8H063S"
-};
-
+    };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-export const auth = getAuth(app);
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app); // ✅ add this line
+
+export {
+  auth,
+  db,
+  storage, // ✅ export this
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  query,
+  where,
+};

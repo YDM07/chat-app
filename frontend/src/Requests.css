@@ -1,0 +1,81 @@
+/* src/pages/Requests.css */
+
+.requests-page {
+    padding: 30px;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f9f9f9;
+    min-height: calc(100vh - 60px);
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.user-card {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.user-info h4 {
+    margin: 0;
+}
+
+.user-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.status {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.status.connected {
+    background-color: #28a745;
+    color: white;
+}
+
+.status.requested {
+    background-color: #ffc107;
+    color: #333;
+}

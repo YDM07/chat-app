@@ -3,9 +3,11 @@ const http = require('http');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { Server } = require('socket.io');
-require('dotenv').config(); // Load environment variables
+require('dotenv').config();
 
-const Message = require('./models/Message'); // MongoDB model
+const Message = require('./models/Message');
+const User = require('./models/User');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -14,62 +16,67 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
+// MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('✅ Connected to MongoDB Atlas'))
+.then(() => console.log('✅ Connected to MongoDB'))
 .catch((err) => console.error('❌ MongoDB connection error:', err));
 
-// Optional REST API to fetch recent messages
-app.get('/messages', async (req, res) => {
-  try {
-    const messages = await Message.find().sort({ timestamp: 1 }).limit(100);
-    res.json(messages);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch messages' });
+// REST API Routes
+app.use('/api/users', userRoutes);
+
+// Socket.IO setup
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3001', // Your frontend address
+    methods: ['GET', 'POST']
   }
 });
 
-// Setup Socket.IO
-const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:3000', // Update if frontend is hosted elsewhere
-    methods: ['GET', 'POST'],
-  },
-});
+// Keep track of online users
+const onlineUsers = new Map();
 
 io.on('connection', (socket) => {
-  console.log('⚡ New client connected:', socket.id);
+  console.log('⚡ Client connected:', socket.id);
 
-  // Listen for chat messages from client
-  socket.on('send-message', async (data) => {
-    const { content, sender } = data;
+  // Client joins their personal room using UID
+  socket.on('join', (userId) => {
+    socket.join(userId);
+    onlineUsers.set(userId, socket.id);
+    console.log(`✅ ${userId} joined their room`);
+  });
 
-    const msg = new Message({
-      content,
-      senderId: sender,
-    });
-
+  // Send private message
+  socket.on('send-message', async ({ sender, recipient, content }) => {
     try {
-      await msg.save();
-      console.log('💾 Message saved:', msg);
-    } catch (error) {
-      console.error('❌ Error saving message:', error.message);
-    }
+      const message = new Message({ sender, recipient, content });
+      await message.save();
 
-    // Broadcast to other clients
-    socket.broadcast.emit('receive-message', data);
+      // Emit message to both sender and recipient's room
+      io.to(sender).emit('receive-message', { sender, recipient, content });
+      io.to(recipient).emit('receive-message', { sender, recipient, content });
+
+      console.log(`💬 ${sender} → ${recipient}: ${content}`);
+    } catch (err) {
+      console.error('❌ Error sending message:', err);
+    }
   });
 
   socket.on('disconnect', () => {
     console.log('🚪 Client disconnected:', socket.id);
+    for (const [userId, sockId] of onlineUsers.entries()) {
+      if (sockId === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }
+    }
   });
 });
 
 // Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`✅ Server is running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
